@@ -46,7 +46,7 @@ $(document).ready(function(){
 		console.log(data_to_send)
 		$.ajax({
 			type: 'POST',
-			url: 'http://172.16.27.31:8080/scraper/newlinks',
+			url: 'http://127.0.0.1:8080/scraper/newlinks',
 			data: {links: data_to_send}
 		})
 	})
