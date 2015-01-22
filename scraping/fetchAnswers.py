@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import urllib2
 import MySQLdb
+import sys
 
 
 def setupProxy(proxy, username, password):
@@ -53,20 +54,31 @@ def fetchAnswers(proxy, username, password):
 	db = MySQLdb.connect(host, user, passwd, database)
 	select_cursor = db.cursor()
 	update_cursor = db.cursor()
-	select_cursor.execute("Select permalink from Answers where isRetrieved = False")
-	update_cursor.execute("Prepare Query from 'Update Answers set answer = ? , isRetrieved = True where permalink = ?'")
 
-	for permalink in select_cursor.fetchall():
-		permalink = permalink[0]
-		answer = removeNonAscii(getAnswerText(permalink))
-		update_cursor.execute("Set @answer = %s",(answer))
-		update_cursor.execute("Set @permalink = %s", (permalink))
-		try: 
-			update_cursor.execute("Execute Query using @answer, @permalink")
-		except Exception as e:
-			print query
-			print e
-	db.commit()
+	while True: #until any answer with isRetrieved = False is present
+		select_cursor.execute("Select permalink from Answers where isRetrieved = False")
+		update_cursor.execute("Prepare Query from 'Update Answers set answer = ? , isRetrieved = True where permalink = ?'")
 
-#specify username as "" if you have a proxy which does not require authentication
-fetchAnswers('202.141.80.19:3128','charanjit','qwer')
+		unretrieved_count = 0
+		for permalink in select_cursor.fetchall():
+			permalink = permalink[0]
+			answer = removeNonAscii(getAnswerText(permalink))
+			update_cursor.execute("Set @answer = %s",(answer))
+			update_cursor.execute("Set @permalink = %s", (permalink))
+			try: 
+				update_cursor.execute("Execute Query using @answer, @permalink")
+			except Exception as e:
+				print query
+				print e
+
+			unretrieved_count += 1
+
+		db.commit()
+
+		if unretrieved_count == 0:
+			break
+
+# Run : python fetchAnswers.py proxy:port-username-password (Ex- python fetchAnswers.py 202.141.80.19:3128-xyz-abc)
+# If using proxy which does not need authentication then, python fetchAnswers.py proxy:port-- (Ex- python fetchAnswers.py 172.16.27.xx:abcd--) 
+(proxy,username,password) = (sys.argv[1]).split('-') 
+fetchAnswers(proxy, username, password)
