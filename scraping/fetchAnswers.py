@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import urllib2
 import MySQLdb
 import sys
+import os
 
 
 def setupProxy(proxy, username, password):
@@ -54,31 +55,43 @@ def fetchAnswers(proxy, username, password):
 	db = MySQLdb.connect(host, user, passwd, database)
 	select_cursor = db.cursor()
 	update_cursor = db.cursor()
+	
 
-	while True: #until any answer with isRetrieved = False is present
+	count = 0
+	while count < 5: #for 5 table iterations to retrieve new answers -- because of discontinued links
+
 		select_cursor.execute("Select permalink from Answers where isRetrieved = False")
 		update_cursor.execute("Prepare Query from 'Update Answers set answer = ? , isRetrieved = True where permalink = ?'")
 
 		unretrieved_count = 0
-		for permalink in select_cursor.fetchall():
-			permalink = permalink[0]
-			answer = removeNonAscii(getAnswerText(permalink))
-			update_cursor.execute("Set @answer = %s",(answer))
-			update_cursor.execute("Set @permalink = %s", (permalink))
-			try: 
+		for permal in select_cursor.fetchall():
+			permalink = 'http://www.quora.com/' + permal[0]
+			try:
+				answer = removeNonAscii(getAnswerText(permalink))
+				update_cursor.execute("Set @answer = %s",(answer))
+				update_cursor.execute("Set @permalink = %s", (permal[0])) 
 				update_cursor.execute("Execute Query using @answer, @permalink")
+				unretrieved_count += 1
 			except Exception as e:
-				print query
+				print permalink
 				print e
-
-			unretrieved_count += 1
-
+			
 		db.commit()
+		count += 1		
 
 		if unretrieved_count == 0:
 			break
 
 # Run : python fetchAnswers.py proxy:port-username-password (Ex- python fetchAnswers.py 202.141.80.19:3128-xyz-abc)
 # If using proxy which does not need authentication then, python fetchAnswers.py proxy:port-- (Ex- python fetchAnswers.py 172.16.27.xx:abcd--) 
-(proxy,username,password) = (sys.argv[1]).split('-') 
+# http_proxy = http://username:password@proxy:port
+http_proxy = (os.environ.get('http_proxy')[7:]).split('@')
+username, password = "",""
+if len(http_proxy) == 1:
+	proxy = http_proxy[0]
+else:
+	proxy = http_proxy[1]
+	auth = http_proxy[0].split(':')
+	username, password = auth[0],auth[1]
+print proxy, username, password
 fetchAnswers(proxy, username, password)
