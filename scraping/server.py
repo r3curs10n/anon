@@ -27,7 +27,7 @@ def dump_data(permalinks):
 
     permalinks = permalinks.split('#')
 
-    db = MySQLdb.connect(HOST_NAME,"root","asdf","AI")
+    db = MySQLdb.connect(HOST_NAME,"root","","AI")
 
     for i in range(0, len(permalinks)):
         author = get_author(permalinks[i])
