@@ -7,6 +7,7 @@ import os
 
 def setupProxy(proxy, username, password):
 	if username == "":
+		print proxy
 		proxy = urllib2.ProxyHandler({'http': proxy})
 		opener = urllib2.build_opener(proxy)
 		urllib2.install_opener(opener)
@@ -19,7 +20,7 @@ def setupProxy(proxy, username, password):
 #db specifications
 host = "localhost"
 user = "root"
-passwd = "asdf"
+passwd = ""
 database = "AI"
 
 def getSoup(url):
@@ -72,11 +73,13 @@ def fetchAnswers(proxy, username, password):
 				update_cursor.execute("Set @permalink = %s", (permal[0])) 
 				update_cursor.execute("Execute Query using @answer, @permalink")
 				unretrieved_count += 1
+				db.commit()
+				print '(y)'
 			except Exception as e:
 				print permalink
 				print e
 			
-		db.commit()
+		#db.commit()
 		count += 1		
 
 		if unretrieved_count == 0:
@@ -93,5 +96,6 @@ else:
 	proxy = http_proxy[1]
 	auth = http_proxy[0].split(':')
 	username, password = auth[0],auth[1]
+proxy = proxy.split('/')[0]
 print proxy, username, password
 fetchAnswers(proxy, username, password)
