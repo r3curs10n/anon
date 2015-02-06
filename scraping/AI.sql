@@ -27,12 +27,15 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `Answers` (
-  `permalink` varchar(255) NOT NULL,
-  `author` varchar(100) NOT NULL,
+  `permalink` varchar(512) NOT NULL,
+  `author` varchar(500) NOT NULL,
   `answer` text NOT NULL,
   `isRetrieved` tinyint(1) NOT NULL DEFAULT '0',
+  `updated_at` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`permalink`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE INDEX update_time_index ON Answers (updated_at);
 
 --
 -- Dumping data for table `Answers`
@@ -55,7 +58,6 @@ INSERT INTO `Answers` (`permalink`, `author`, `answer`, `isRetrieved`) VALUES
 ('I-am-single-child-with-working-parents-What-should-I-do-if-I-feel-very-alone-at-times/answer/Raghu-Nayyar', 'Raghu-Nayyar', '', 0),
 ('I-have-a-strength-based-phone-interview-at-Barclays-in-a-few-hours-What-can-I-still-do-now-to-improve-my-result/answer/Raghu-Nayyar', 'Raghu-Nayyar', '', 0),
 ('I-have-zero-graphic-design-skills-Can-I-still-make-a-good-UX-designer-interaction-designer/answer/Raghu-Nayyar', 'Raghu-Nayyar', '', 0),
-('I-worked-on-Android-app-development-For-the-last-3-months-I-am-working-on-HTML5-CSS3-JavaScript-and-jQuery-to-develop-web-apps-and-cross-platform-mobile-web-apps-Is-there-any-scope-for-web-app-development-or-should-I-continue-to-Android-app-development/an', 'Raghu-Nayyar', '', 0),
 ('If-I-walk-up-to-a-Muslim-and-say-You-Muslims-are-thin-skinned-murderers-Islam-is-a-religion-of-violence-and-he-punches-me-in-the-face-will-my-words-be-considered-fighting-words/answer/Raghu-Nayyar', 'Raghu-Nayyar', '', 0),
 ('If-the-smartest-students-in-India-go-to-IIT-where-do-the-smartest-students-go-in-the-USA/answer/Raghu-Nayyar', 'Raghu-Nayyar', '', 0),
 ('Is-CoffeeScript-reliable/answer/Raghu-Nayyar', 'Raghu-Nayyar', '', 0),
