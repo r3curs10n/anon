@@ -50,8 +50,8 @@ def update():
 
 	db = getDB()
 	cur = db.cursor(MySQLdb.cursors.DictCursor)
-
-	cur.execute("SELECT * FROM Answers WHERE isRetrieved=1 AND updated_at > %d" % ts)
+	tsstr = "STR_TO_DATE('%s', 'Y-m-d H:i:s')" % str(ts)
+	cur.execute("SELECT * FROM Answers WHERE isRetrieved=1 AND updated_at > %s" % tsstr)
 	for row in cur.fetchall():
 		ds.X.append(row['answer'])
 		ds.Y.append(row['author'])
