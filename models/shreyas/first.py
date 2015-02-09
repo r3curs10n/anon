@@ -41,7 +41,7 @@ def stats(Y, Yd):
 		print '%s: %d/%d' % (k, dic[k][0], dic[k][1])
 	print '%d/%d = %f' % (correct, len(Y), 1.0*correct/len(Y))
 
-@cahce_it
+@cache_it
 def get_tagged_text(X):
 	return [pos_tags(x) for x in X]
 
