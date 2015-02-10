@@ -8,6 +8,8 @@ def cache_it(func):
 		# hashDict = {'Hashed_value_of_arguments' : 'Corresponding_function_output'}
 		hashDict = {}
 
+		sargs = cPickle.dumps(args)
+
 		# Checking whether some cached values exist or not
 		# Load the cached values in hashDict
 		# The filename storing the dictionary dump
@@ -18,7 +20,8 @@ def cache_it(func):
 
 		# Computing the hash value corresponding to the current
 		# function arguments and storing it in curHash
-		curHash = hash(args)		
+		curHash = hash(sargs)
+
 
 		# Checking whether the hash exists apriori or not
 		# If yes, simply return the output
