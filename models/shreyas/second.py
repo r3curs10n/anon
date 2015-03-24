@@ -59,8 +59,14 @@ def main():
 	ds = Dataset.open('quora')
 	(X, Y) = ([x.split('.') for x in ds.X], ds.Y)
 	X = ([sum([len( filter(None, y.split(' ')) ) for y in x])/len(x) for x in X])
+	X = zip(X, [len( filter(None, x.split('\n')) ) for x in ds.X])
 
-	X = [[x] for x in X]
+	# print [x for x in ds.X if len( filter(None, x.split('\n')) ) > 1]
+
+	# print [(x, y) for (x, y) in X if y > 1]
+	X = [[x, y] for (x, y) in X]
+
+
 
 	Z = zip(X, Y)
 	shuffle(Z)
