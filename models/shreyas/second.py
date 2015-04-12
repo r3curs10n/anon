@@ -25,8 +25,8 @@ def istats(Y):
 	for y in Y:
 		c = dic.get(y, 0)
 		dic[y] = c+1
-	for k in dic.keys():
-		print '%s: %d' % (k, dic[k])
+	# for k in dic.keys():
+	# 	print '%s: %d' % (k, dic[k])
 
 def stats(Y, Yd):
 	Yz = zip(Y, Yd)
@@ -38,15 +38,13 @@ def stats(Y, Yd):
 			c+=1
 		t+=1
 		dic[y] = (c,t)
-	# for k in dic.keys():
-	# 	print '%s: %d/%d' % (k, dic[k][0], dic[k][1])
-	# print '%d/%d = %f' % (correct, len(Y), 1.0*correct/len(Y))
+		
 	return 1.0*correct/len(Y)
 
 
 def train_chunk(X, Y, Xe, Ye):
-	# clf = KNeighborsClassifier(n_neighbors=5).fit(X, Y)
-	clf = GaussianNB().fit(X, Y)
+	clf = KNeighborsClassifier(n_neighbors=5).fit(X, Y)
+	#clf = GaussianNB().fit(X, Y)
 
 	Yd = clf.predict(Xe)
 
@@ -71,7 +69,6 @@ def main():
 	Z = zip(X, Y)
 	shuffle(Z)
 	(X, Y) = zip(*Z)
-
 	si=0
 	acc = 0.0
 	cnt = 0
